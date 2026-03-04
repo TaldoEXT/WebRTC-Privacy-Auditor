@@ -16,11 +16,12 @@ During this "handshake," the browser generates **ICE Candidates**. Some of these
 ## 🛠️ Usage
 To test this script in a controlled, educational environment:
 
-1. **Clone this repository** to your local machine.
-2. **Open a website** that uses WebRTC (e.g., P2P video chats or WebRTC leak test sites).
-3. **Open the Browser Console** by pressing `F12` and selecting the **Console** tab (or `Ctrl+Shift+I`).
-4. **Paste the content** of `script.js` into the console and press `Enter`.
-5. **Logs will appear** automatically in the console whenever a peer connection is established and an IP is identified.
+1. **Create Your API Key** in https://ipinfo.io/
+2. **Clone this repository** to your local machine.
+3. **Open a website** that uses WebRTC (e.g., P2P video chats or WebRTC leak test sites).
+4. **Open the Browser Console** by pressing `F12` and selecting the **Console** tab (or `Ctrl+Shift+I`).
+5. **Paste the content** of `script.js` into the console and press `Enter`.
+6. **Logs will appear** automatically in the console whenever a peer connection is established and an IP is identified.
 
 ## 🛡️ How to Protect Yourself
 To prevent this type of leak and maintain your privacy:
