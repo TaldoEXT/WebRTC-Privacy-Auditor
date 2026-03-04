@@ -1,0 +1,85 @@
+/**
+ * WebRTC IP Leak Detection Script (Educational)
+ * * This script hooks into the RTCPeerConnection API to intercept 
+ * ICE candidates and extract the remote peer's public IP address.
+ */
+
+const SETTINGS = {
+    API_KEY: 'KEY', // Replace with your own key.
+    GEO_URL: 'https://ipinfo.io/'
+};
+
+/**
+ * Initializes the WebRTC Hook
+ */
+const initWebRTCHook = () => {
+    const OriginalRPC = window.RTCPeerConnection || window.webkitRTCPeerConnection;
+
+    if (!OriginalRPC) {
+        console.error("WebRTC is not supported in this browser.");
+        return;
+    }
+
+    window.RTCPeerConnection = function(...args) {
+        const pc = new OriginalRPC(...args);
+
+        // Backup the original addIceCandidate method
+        pc.originalAddIceCandidate = pc.addIceCandidate;
+
+        // Overwrite with our interceptor
+        pc.addIceCandidate = function(iceCandidate, ...rest) {
+            if (iceCandidate && iceCandidate.candidate) {
+                const candidateStr = iceCandidate.candidate;
+                
+                // 'srflx' candidates contain the public IP via STUN server
+                if (candidateStr.includes("srflx")) {
+                    const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
+                    const match = candidateStr.match(ipRegex);
+                    
+                    if (match && match[1]) {
+                        fetchLocationData(match[1]);
+                    }
+                }
+            }
+            return pc.originalAddIceCandidate(iceCandidate, ...rest);
+        };
+
+        return pc;
+    };
+    
+    console.log("%c[WebRTC Hook Active]", "color: green; font-weight: bold;");
+};
+
+/**
+ * Fetches geolocation data for a specific IP
+ */
+const fetchLocationData = async (ip) => {
+    try {
+        const response = await fetch(`${SETTINGS.GEO_URL}${ip}?token=${SETTINGS.API_KEY}`);
+        const data = await response.json();
+        printLog(data);
+    } catch (err) {
+        console.error("Error fetching IP data:", err);
+    }
+};
+
+/**
+ * Displays the formatted output in the console
+ */
+const printLog = (data) => {
+    const [lat, lon] = data.loc ? data.loc.split(',') : ['N/A', 'N/A'];
+    
+    console.group(`📍 Remote Peer Identified: ${data.ip}`);
+    console.table({
+        "Location": `${data.city}, ${data.region} (${data.country})`,
+        "ISP": data.org,
+        "Hostname": data.hostname || "N/A",
+        "Timezone": data.timezone,
+        "Coordinates": `${lat}, ${lon}`
+    });
+    console.log(`Google Maps: https://www.google.com/maps?q=${lat},${lon}`);
+    console.groupEnd();
+};
+
+// Start the script
+initWebRTCHook();
