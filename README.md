@@ -11,8 +11,23 @@ WebRTC (Web Real-Time Communication) uses the **ICE (Interactive Connectivity Es
 
 During this "handshake," the browser generates **ICE Candidates**. Some of these candidates, specifically the `srflx` (Server Reflexive) type, are retrieved from STUN servers and contain the user's **Public IP Address**.
 
-## 🚀 How It Works
-The script performs a "Monkey Patch" (hook) on the native `RTCPeerConnection` API:
-1. It intercepts the `addIceCandidate` method.
-2. It parses the candidate string to find the public IP.
-3. It uses a Geolocation API (`ipinfo.io`) to fetch metadata about that IP.
+---
+
+## 🛠️ Usage
+To test this script in a controlled, educational environment:
+
+1. **Clone this repository** to your local machine.
+2. **Open a website** that uses WebRTC (e.g., P2P video chats or WebRTC leak test sites).
+3. **Open the Browser Console** by pressing `F12` and selecting the **Console** tab (or `Ctrl+Shift+I`).
+4. **Paste the content** of `script.js` into the console and press `Enter`.
+5. **Logs will appear** automatically in the console whenever a peer connection is established and an IP is identified.
+
+## 🛡️ How to Protect Yourself
+To prevent this type of leak and maintain your privacy:
+
+* **Use a high-quality VPN:** Ensure your VPN provider specifically masks WebRTC traffic (not all do by default).
+* **Install browser extensions:** Use tools like **WebRTC Leak Prevent** or **uBlock Origin** (with WebRTC blocking enabled).
+* **Firefox Configuration:** You can disable WebRTC entirely by typing `about:config` in the address bar and setting `media.peerconnection.enabled` to `false`.
+
+## ⚖️ License
+Distributed under the MIT License. See `LICENSE` for more information.
